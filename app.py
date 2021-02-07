@@ -26,8 +26,8 @@ def url_to_image(url):
 	return image
 
 
-@app.route('/',methods=['POST'])
-def hello():
+@app.route('/v1/predict',methods=['POST'])
+def predict():
     # imgURL = "https://s3.ap-south-1.amazonaws.com/gocomet-images/carriers/logo/one-line.png"
     _json = (request.json)
     imgURL = _json['imgURL']
@@ -38,19 +38,22 @@ def hello():
     caption = "This is beautiful"
     
     cur = mysql.connection.cursor()
-    cur.execute("INSERT INTO caption(image, caption) VALUES (%s, %s)", (imgURL, caption))
+    cur.execute("INSERT INTO caption(image, img_caption) VALUES (%s, %s)", (imgURL, caption))
     mysql.connection.commit()
     cur.close()
-    return "Done"
+    resp = jsonify(
+        caption=caption
+    )
+    resp.status_code = 200
+    return resp
 
-@app.route('/search',methods=['POST'])
+@app.route('/v1/search',methods=['POST'])
 def search():
     _json = (request.json)
-    caption = _json['content']
-    
+    caption = _json['caption']
+    conn = mysql.connection
+    cur = conn.cursor()
     try:
-        conn = mysql.connection
-        cur = conn.cursor()
         # caption = "'%" + caption + "%'"
         query = "SELECT image FROM caption WHERE img_caption LIKE %s"
         value = (caption, )
@@ -60,9 +63,9 @@ def search():
         resp.status_code = 200
         return resp
     except Exception as e:
-		print(e)
-	finally:
-		cur.close() 
+        print(e)
+    finally:
+        cur.close() 
 		
     
         
