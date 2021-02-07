@@ -51,7 +51,8 @@ coverage.xml
 
 # Sphinx documentation
 docs/_build/
-
+/checkpoint/
+/caption/
 *.DS_Store
 
 
