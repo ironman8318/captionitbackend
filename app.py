@@ -26,9 +26,11 @@ def url_to_image(url):
 	return image
 
 
-@app.route('/',methods=['GET'])
+@app.route('/',methods=['POST'])
 def hello():
-    imgURL = "https://s3.ap-south-1.amazonaws.com/gocomet-images/carriers/logo/one-line.png"
+    # imgURL = "https://s3.ap-south-1.amazonaws.com/gocomet-images/carriers/logo/one-line.png"
+    _json = (request.json)
+    imgURL = _json['imgURL']
     
     # Pass imageURL into url_to_image function
     image = url_to_image(imgURL)
